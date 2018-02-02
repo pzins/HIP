@@ -30,8 +30,10 @@ THE SOFTWARE.
 #if defined(__HIP_PLATFORM_HCC__) and (ENABLE_HIP_PROFILE==1)
 #include <CXLActivityLogger.h>
 #define HIP_SCOPED_MARKER(markerName, group) amdtScopedMarker __scopedMarker(markerName, group, nullptr);
-#define HIP_BEGIN_MARKER(markerName, group) amdtBeginMarker(markerName, group, nullptr);
-#define HIP_END_MARKER() amdtEndMarker();
+// #define HIP_BEGIN_MARKER(markerName, group) amdtBeginMarker(markerName, group, nullptr);
+#define HIP_BEGIN_MARKER(markerName, group) tracepoint(hipTrace, begin, "ol");
+// #define HIP_END_MARKER() amdtEndMarker();
+#define HIP_END_MARKER() tracepoint(hipTrace, begin, "ol");
 #else
 #define HIP_SCOPED_MARKER(markerName, group)
 #define HIP_BEGIN_MARKER(markerName, group)
