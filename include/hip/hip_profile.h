@@ -31,9 +31,9 @@ THE SOFTWARE.
 #include <CXLActivityLogger.h>
 #define HIP_SCOPED_MARKER(markerName, group) amdtScopedMarker __scopedMarker(markerName, group, nullptr);
 // #define HIP_BEGIN_MARKER(markerName, group) amdtBeginMarker(markerName, group, nullptr);
-#define HIP_BEGIN_MARKER(markerName, group) tracepoint(hipTrace, begin, "ol");
+#define HIP_BEGIN_MARKER(markerName, group) tracepoint(hipTracer, begin, "ol");
 // #define HIP_END_MARKER() amdtEndMarker();
-#define HIP_END_MARKER() tracepoint(hipTrace, begin, "ol");
+#define HIP_END_MARKER() tracepoint(hipTracer, end, "ol");
 #else
 #define HIP_SCOPED_MARKER(markerName, group)
 #define HIP_BEGIN_MARKER(markerName, group)

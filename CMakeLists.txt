@@ -150,6 +150,7 @@ if(HIP_PLATFORM STREQUAL "hcc")
     set(HIP_HCC_BUILD_FLAGS)
     if(COMPILE_HIP_ATP_MARKER)
         include_directories(/opt/rocm/profiler/CXLActivityLogger/include)
+        include_directories(/usr/include/x86_64-linux-gnu)
         set(HIP_HCC_BUILD_FLAGS "${HIP_HCC_BUILD_FLAGS} -DCOMPILE_HIP_ATP_MARKER=1")
     endif()
 
@@ -179,6 +180,7 @@ if(HIP_PLATFORM STREQUAL "hcc")
         src/hip_db.cpp
         src/grid_launch.cpp
         src/hip_texture.cpp
+        hipTracer.o
         src/env.cpp)
 
     set(SOURCE_FILES_DEVICE
@@ -189,7 +191,7 @@ if(HIP_PLATFORM STREQUAL "hcc")
         src/math_functions.cpp)
 
     execute_process(COMMAND ${HCC_HOME}/bin/hcc-config --ldflags OUTPUT_VARIABLE HCC_LD_FLAGS)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${HCC_LD_FLAGS} -Wl,-Bsymbolic")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${HCC_LD_FLAGS} -ldl -llttng-ust -Wl,-Bsymbolic")
     #find_package(LLVM HINTS ${HCC_HOME}/compiler/lib/cmake)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --amdgpu-target=gfx701 --amdgpu-target=gfx801 --amdgpu-target=gfx802 --amdgpu-target=gfx803 --amdgpu-target=gfx900")
     if(COMPILE_HIP_ATP_MARKER)

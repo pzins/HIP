@@ -192,8 +192,13 @@ extern const char *API_COLOR_END;
 // through ptr-to-args (ie the pointers allocated by hipMalloc).
 #if COMPILE_HIP_ATP_MARKER
 #include "CXLActivityLogger.h"
-#define MARKER_BEGIN(markerName,group) amdtBeginMarker(markerName, group, nullptr);
-#define MARKER_END() amdtEndMarker();
+#include "hipTracer.h"
+
+// #define MARKER_BEGIN(markerName,group) amdtBeginMarker(markerName, group, nullptr);
+#define MARKER_BEGIN(markerName,group) tracepoint(hipTracer, begin, "ol");
+
+// #define MARKER_END() amdtEndMarker();
+#define MARKER_END() tracepoint(hipTracer, end, "ol");
 #define RESUME_PROFILING amdtResumeProfiling(AMDT_ALL_PROFILING);
 #define STOP_PROFILING   amdtStopProfiling(AMDT_ALL_PROFILING);
 #else
