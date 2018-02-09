@@ -1593,7 +1593,7 @@ void ihipPostLaunchKernel(const char *kernelName, hipStream_t stream, grid_launc
 
     stream->lockclose_postKernelCommand(kernelName, lp.av);
     if(HIP_PROFILE_API) {
-        MARKER_END();
+        MARKER_END(__func__);
     }
 }
 

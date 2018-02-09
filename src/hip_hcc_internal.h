@@ -195,16 +195,16 @@ extern const char *API_COLOR_END;
 #include "hipTracer.h"
 
 // #define MARKER_BEGIN(markerName,group) amdtBeginMarker(markerName, group, nullptr);
-#define MARKER_BEGIN(markerName,group) tracepoint(hipTracer, begin, "ol");
+#define MARKER_BEGIN(markerName,group) tracepoint(hipTracer, begin, markerName);
 
 // #define MARKER_END() amdtEndMarker();
-#define MARKER_END() tracepoint(hipTracer, end, "ol");
+#define MARKER_END(markerName) tracepoint(hipTracer, end, markerName);
 #define RESUME_PROFILING amdtResumeProfiling(AMDT_ALL_PROFILING);
 #define STOP_PROFILING   amdtStopProfiling(AMDT_ALL_PROFILING);
 #else
 // Swallow scoped markers:
 #define MARKER_BEGIN(markerName,group)
-#define MARKER_END()
+#define MARKER_END(markerName)
 #define RESUME_PROFILING
 #define STOP_PROFILING
 #endif
@@ -331,7 +331,7 @@ uint64_t hipApiStartTick;\
                     (localHipStatus == 0) ? API_COLOR:KRED, tls_tidInfo.tid(),tls_tidInfo.apiSeqNum(),  \
                     __func__, localHipStatus, ihipErrorString(localHipStatus), ticks, API_COLOR_END);\
         }\
-        if (HIP_PROFILE_API) { MARKER_END(); }\
+        if (HIP_PROFILE_API) { MARKER_END(__func__); }\
         localHipStatus;\
     })
 
