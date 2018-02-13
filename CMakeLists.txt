@@ -180,7 +180,7 @@ if(HIP_PLATFORM STREQUAL "hcc")
         src/hip_db.cpp
         src/grid_launch.cpp
         src/hip_texture.cpp
-        hipTracer.o
+        src/hipTracer.o
         src/env.cpp)
 
     set(SOURCE_FILES_DEVICE

@@ -195,10 +195,10 @@ extern const char *API_COLOR_END;
 #include "hipTracer.h"
 
 // #define MARKER_BEGIN(markerName,group) amdtBeginMarker(markerName, group, nullptr);
-#define MARKER_BEGIN(markerName,group) tracepoint(hipTracer, begin, markerName);
+#define MARKER_BEGIN(markerName, group) tracepoint(hipTracer, function_entry, markerName);
 
 // #define MARKER_END() amdtEndMarker();
-#define MARKER_END(markerName) tracepoint(hipTracer, end, markerName);
+#define MARKER_END(markerName) tracepoint(hipTracer, function_exit, markerName);
 #define RESUME_PROFILING amdtResumeProfiling(AMDT_ALL_PROFILING);
 #define STOP_PROFILING   amdtStopProfiling(AMDT_ALL_PROFILING);
 #else
