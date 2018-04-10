@@ -74,7 +74,7 @@ int HIP_PROFILE_API= 0;
 std::string HIP_DB_START_API;
 std::string HIP_DB_STOP_API;
 int HIP_DB= 0;
-int HIP_VISIBLE_DEVICES = 0; 
+int HIP_VISIBLE_DEVICES = 0;
 int HIP_WAIT_MODE = 0;
 
 int HIP_FORCE_P2P_HOST = 0;
@@ -469,7 +469,7 @@ void ihipCtxCriticalBase_t<CtxMutex>::recomputePeerAgents()
 template<>
 bool ihipCtxCriticalBase_t<CtxMutex>::isPeerWatcher(const ihipCtx_t *peer)
 {
-    auto match = std::find_if(_peers.begin(), _peers.end(), 
+    auto match = std::find_if(_peers.begin(), _peers.end(),
                     [=] (const ihipCtx_t *d) { return d->getDeviceNum() == peer->getDeviceNum(); });
 
     return (match != std::end(_peers));
@@ -726,7 +726,7 @@ hsa_status_t get_pool_info(hsa_amd_memory_pool_t pool, void* data)
     case HSA_REGION_SEGMENT_READONLY:
         err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &(p_prop->totalConstMem)); break;
     case HSA_REGION_SEGMENT_GROUP:
-        err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &(p_prop->sharedMemPerBlock)); 
+        err = hsa_amd_memory_pool_get_info(pool, HSA_AMD_MEMORY_POOL_INFO_SIZE, &(p_prop->sharedMemPerBlock));
         break;
     default: break;
     }
@@ -864,8 +864,8 @@ hipError_t ihipDevice_t::initProperties(hipDeviceProp_t* prop)
 
     // Get memory properties
     err = hsa_amd_agent_iterate_memory_pools(_hsaAgent, get_pool_info, prop);
-    if (err == HSA_STATUS_INFO_BREAK) { 
-        err = HSA_STATUS_SUCCESS; 
+    if (err == HSA_STATUS_INFO_BREAK) {
+        err = HSA_STATUS_SUCCESS;
     }
     DeviceErrorCheck(err);
 
@@ -1033,7 +1033,7 @@ std::string ihipCtx_t::toString() const
 //   activity, but doesn't actually block the host.  If host blocking is desired, the caller should set syncHost.
 //
 //   syncToHost causes host to wait for the stream to finish.
-//   Note HIP_SYNC_NULL_STREAM=1 path always sync to Host. 
+//   Note HIP_SYNC_NULL_STREAM=1 path always sync to Host.
 void ihipCtx_t::locked_syncDefaultStream(bool waitOnSelf, bool syncHost)
 {
     LockedAccessor_CtxCrit_t  crit(_criticalData);
@@ -1048,7 +1048,7 @@ void ihipCtx_t::locked_syncDefaultStream(bool waitOnSelf, bool syncHost)
 
         // Don't wait for streams that have "opted-out" of syncing with NULL stream.
         // And - don't wait for the NULL stream, unless waitOnSelf specified.
-        bool waitThisStream = (!(stream->_flags & hipStreamNonBlocking)) && 
+        bool waitThisStream = (!(stream->_flags & hipStreamNonBlocking)) &&
                               (waitOnSelf || (stream != _defaultStream));
 
         if (HIP_SYNC_NULL_STREAM) {
@@ -1071,7 +1071,7 @@ void ihipCtx_t::locked_syncDefaultStream(bool waitOnSelf, bool syncHost)
         }
     }
 
-    
+
     // Enqueue a barrier to wait on all the barriers we sent above:
     if (!HIP_SYNC_NULL_STREAM && !depOps.empty()) {
         LockedAccessor_StreamCrit_t defaultStreamCrit(_defaultStream->_criticalData);
@@ -1241,7 +1241,7 @@ void HipReadEnv()
         tokenize(HIP_LAUNCH_BLOCKING_KERNELS, ',', &g_hipLaunchBlockingKernels);
     }
     READ_ENV_I(release, HIP_API_BLOCKING, 0, "Make HIP APIs 'host-synchronous', so they block until completed.  Impacts hipMemcpyAsync, hipMemsetAsync." );
-    
+
     READ_ENV_I(release, HIP_HIDDEN_FREE_MEM, 0, "Amount of memory to hide from the free memory reported by hipMemGetInfo, specified in MB. Impacts hipMemGetInfo." );
 
     READ_ENV_C(release, HIP_DB, 0,  "Print debug info.  Bitmask (HIP_DB=0xff) or flags separated by '+' (HIP_DB=api+sync+mem+copy)", HIP_DB_callback);
@@ -1447,7 +1447,7 @@ hipStream_t ihipSyncAndResolveStream(hipStream_t stream)
                     if (!defaultStreamCrit->_av.get_is_empty()) {
                         needGatherMarker = true;
 
-                        tprintf(DB_SYNC, "  %s adding marker to default %s for dependency\n", 
+                        tprintf(DB_SYNC, "  %s adding marker to default %s for dependency\n",
                                 ToString(stream).c_str(), ToString(defaultStream).c_str());
                         dcf = defaultStreamCrit->_av.create_marker(hc::accelerator_scope);
                     } else {
@@ -1460,7 +1460,7 @@ hipStream_t ihipSyncAndResolveStream(hipStream_t stream)
                     LockedAccessor_StreamCrit_t thisStreamCrit(stream->criticalData());
                     // TODO - could be "noret" version of create_blocking_marker
                     thisStreamCrit->_av.create_blocking_marker(dcf, hc::accelerator_scope);
-                    tprintf(DB_SYNC, "  %s adding marker to wait for freshly recorded default-stream marker \n", 
+                    tprintf(DB_SYNC, "  %s adding marker to wait for freshly recorded default-stream marker \n",
                             ToString(stream).c_str());
                 }
             }
@@ -1595,7 +1595,7 @@ void ihipPostLaunchKernel(const char *kernelName, hipStream_t stream, grid_launc
 
     stream->lockclose_postKernelCommand(kernelName, lp.av);
     if(HIP_PROFILE_API) {
-        MARKER_END();
+        MARKER_END(__func__);
     }
 }
 
@@ -1825,22 +1825,22 @@ void ihipStream_t::resolveHcMemcpyDirection(unsigned hipMemKind,
         if (HIP_FORCE_P2P_HOST & 0x1) {
             *forceUnpinnedCopy = true;
             tprintf (DB_COPY, "Copy engine (dev:%d agent=0x%lx) can see src and dst but HIP_FORCE_P2P_HOST=0, forcing copy through staging buffers.\n",
-                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1, 
+                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1,
                     *copyDevice ? (*copyDevice)->getDevice()->_hsaAgent.handle : 0x0);
 
         } else {
             tprintf (DB_COPY, "Copy engine (dev:%d agent=0x%lx) can see src and dst.\n",
-                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1, 
+                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1,
                     *copyDevice ? (*copyDevice)->getDevice()->_hsaAgent.handle : 0x0);
         }
     } else {
         *forceUnpinnedCopy = true;
         tprintf (DB_COPY, "Copy engine(dev:%d agent=0x%lx) cannot see both host and device pointers - forcing copy with unpinned engine.\n",
-                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1, 
+                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1,
                     *copyDevice ? (*copyDevice)->getDevice()->_hsaAgent.handle : 0x0);
         if (HIP_FAIL_SOC & 0x2) {
             fprintf (stderr, "HIP_FAIL_SOC:  P2P: copy engine(dev:%d agent=0x%lx) cannot see both host and device pointers - forcing copy with unpinned engine.\n",
-                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1, 
+                    *copyDevice ? (*copyDevice)->getDeviceNum() : -1,
                     *copyDevice ? (*copyDevice)->getDevice()->_hsaAgent.handle : 0x0);
             throw ihipException(hipErrorRuntimeOther);
         }
@@ -1859,7 +1859,7 @@ void printPointerInfo(unsigned dbFlag, const char *tag, const void *ptr, const h
 
 
 // the pointer-info as returned by HC refers to the allocation
-// This routine modifies the pointer-info so it appears to refer to the specific ptr and sizeBytes. 
+// This routine modifies the pointer-info so it appears to refer to the specific ptr and sizeBytes.
 // TODO -remove this when HCC uses HSA pointer info functions directly.
 void tailorPtrInfo(hc::AmPointerInfo *ptrInfo, const void * ptr, size_t sizeBytes)
 {

@@ -193,14 +193,15 @@ extern const char *API_COLOR_END;
 // through ptr-to-args (ie the pointers allocated by hipMalloc).
 #if COMPILE_HIP_ATP_MARKER
 #include "CXLActivityLogger.h"
-#define MARKER_BEGIN(markerName,group) amdtBeginMarker(markerName, group, nullptr);
-#define MARKER_END() amdtEndMarker();
+#include "hipTracer.h"
+#define MARKER_BEGIN(markerName, group) tracepoint(hipTracer, function_entry, "hip_api", markerName);
+#define MARKER_END(markerName) tracepoint(hipTracer, function_exit, "hip_api", markerName);
 #define RESUME_PROFILING amdtResumeProfiling(AMDT_ALL_PROFILING);
 #define STOP_PROFILING   amdtStopProfiling(AMDT_ALL_PROFILING);
 #else
 // Swallow scoped markers:
 #define MARKER_BEGIN(markerName,group)
-#define MARKER_END()
+#define MARKER_END(markerName)
 #define RESUME_PROFILING
 #define STOP_PROFILING
 #endif
@@ -327,7 +328,7 @@ uint64_t hipApiStartTick=0;\
                     (localHipStatus == 0) ? API_COLOR:KRED, tls_tidInfo.tid(),tls_tidInfo.apiSeqNum(),  \
                     __func__, localHipStatus, ihipErrorString(localHipStatus), ticks, API_COLOR_END);\
         }\
-        if (HIP_PROFILE_API) { MARKER_END(); }\
+        if (HIP_PROFILE_API) { MARKER_END(__func__); }\
         localHipStatus;\
     })
 

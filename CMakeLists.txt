@@ -181,7 +181,8 @@ if(HIP_PLATFORM STREQUAL "hcc")
         src/grid_launch.cpp
         src/hip_texture.cpp
         src/env.cpp
-        src/program_state.cpp)
+        src/program_state.cpp
+        src/hipTracer.o)
 
     set(SOURCE_FILES_DEVICE
         src/device_util.cpp
@@ -191,7 +192,7 @@ if(HIP_PLATFORM STREQUAL "hcc")
         src/math_functions.cpp)
 
     execute_process(COMMAND ${HCC_HOME}/bin/hcc-config --ldflags OUTPUT_VARIABLE HCC_LD_FLAGS)
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${HCC_LD_FLAGS} -Wl,-Bsymbolic")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} ${HCC_LD_FLAGS} -ldl -llttng-ust -Wl,-Bsymbolic")
     #find_package(LLVM HINTS ${HCC_HOME}/compiler/lib/cmake)
     set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --amdgpu-target=gfx701 --amdgpu-target=gfx801 --amdgpu-target=gfx802 --amdgpu-target=gfx803 --amdgpu-target=gfx900")
     if(COMPILE_HIP_ATP_MARKER)
